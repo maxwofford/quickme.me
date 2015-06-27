@@ -1,2 +1,6 @@
 # We don't want to track our images
 public/*
+
+# Ignore our bundle generated folders
+vendor/*
+.bundle/*
