@@ -1,10 +1,10 @@
 require 'sinatra'
 
-def get_image_by_folder(folder_name)
+def get_image_by_folder(query)
   categories = Dir.entries(File.dirname(__FILE__) + '/public')
   for category in categories
     next if category == '..' or category == '.'
-    if category == folder_name
+    if query.include? category
       return Dir[File.dirname(__FILE__) + "/public/#{category}/*"].sample
     end
   end
