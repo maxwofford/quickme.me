@@ -11,7 +11,7 @@ def get_image_by_folder(query)
       return Dir[File.dirname(__FILE__) + "/public/#{category}/*"].sample
     end
   end
-  status 404
+  return Dir[File.dirname(__FILE__) + "/public/not_found/*"].sample
 end
 
 def list_folders()
