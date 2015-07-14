@@ -21,6 +21,9 @@ def list_folders()
   template = '<a href="/%s">%s</a>'
   for category in categories
     next if category == '..' or category == '.'
+    unless output == ''
+      output += ' '
+    end
     output += template % [category,category]
   end
   output
