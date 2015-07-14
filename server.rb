@@ -14,3 +14,18 @@ end
 get '/:tag' do
   send_file(get_image_by_folder(params[:tag]))
 end
+
+def list_folders()
+  categories = Dir.entries(File.dirname(__FILE__) + '/public')
+  output = ''
+  template = '<a href="/%s">%s</a>'
+  for category in categories
+    next if category == '..' or category == '.'
+    output += template % [category,category]
+  end
+  output
+end
+
+get '/' do
+  list_folders()
+end
