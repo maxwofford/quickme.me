@@ -1,5 +1,8 @@
+require 'rubygems'
+require 'bundler/setup'
 require 'sinatra'
 
+# Methods
 def get_image_by_folder(query)
   categories = Dir.entries(File.dirname(__FILE__) + '/public')
   for category in categories
@@ -9,10 +12,6 @@ def get_image_by_folder(query)
     end
   end
   status 404
-end
-
-get '/:tag' do
-  send_file(get_image_by_folder(params[:tag]))
 end
 
 def list_folders()
@@ -29,6 +28,12 @@ def list_folders()
   output
 end
 
+# Routes
 get '/' do
-  list_folders()
+  @folder_list = list_folders()
+  haml :index
+end
+
+get '/:tag' do
+  send_file(get_image_by_folder(params[:tag]))
 end
