@@ -3,7 +3,7 @@ require 'bundler/setup'
 require 'sinatra'
 
 # Methods
-def get_image_by_folder(query)
+def get_file_by_folder(query)
   categories = Dir.entries(File.dirname(__FILE__) + '/public')
   for category in categories
     next if category == '..' or category == '.'
@@ -19,11 +19,11 @@ def list_folders()
   output = ''
   template = '<a href="/%s">%s</a>'
   for category in categories
-    next if category == '..' or category == '.'
+    next if ['.', '..', 'not_found', 'robots.txt'].include? category
     unless output == ''
       output += ' '
     end
-    output += template % [category,category]
+    output += template % [category, category]
   end
   output
 end
@@ -35,5 +35,5 @@ get '/' do
 end
 
 get '/:tag' do
-  send_file(get_image_by_folder(params[:tag]))
+  send_file(get_file_by_folder(params[:tag]))
 end
