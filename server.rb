@@ -47,7 +47,7 @@ get '/:tag' do
   send_file(get_file_by_folder(params[:tag]))
 end
 
-get '/:tag/s' do
+get '/s/:tag' do
   results = []
   Google::Search::Image.new(query: params[:tag]).each do |image|
     results.push image.uri
