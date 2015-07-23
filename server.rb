@@ -1,5 +1,7 @@
-require 'rubygems'
 require 'bundler/setup'
+require 'google-search'
+require 'pry'
+require 'rubygems'
 require 'sinatra'
 
 # Methods
@@ -28,6 +30,13 @@ def list_folders()
   output
 end
 
+def remote_file_is_image?(url)
+  url = URI.parse(url)
+  Net::HTTP.start(url.host, url.port) do |http|
+    return http.head(url.request_uri)['Content-Type'].start_with? 'image'
+  end
+end
+
 # Routes
 get '/' do
   @folder_list = list_folders()
@@ -36,4 +45,17 @@ end
 
 get '/:tag' do
   send_file(get_file_by_folder(params[:tag]))
+end
+
+get '/:tag/s' do
+  results = []
+  Google::Search::Image.new(query: params[:tag]).each do |image|
+    results.push image.uri
+  end
+  image_url = results.sample
+  if remote_file_is_image? image_url
+    redirect image_url
+  else
+    send_file(get_file_by_folder(params[:tag]))
+  end
 end
