@@ -1,8 +1,11 @@
+require 'rubygems'
+
+require 'sinatra'
+
 require 'bundler/setup'
+require 'giphy'
 require 'google-search'
 require 'pry'
-require 'rubygems'
-require 'sinatra'
 
 # Methods
 def get_file_by_folder(query)
@@ -45,6 +48,11 @@ end
 
 get '/:tag' do
   send_file(get_file_by_folder(params[:tag]))
+end
+
+get '/g/:tag' do
+  gif = Giphy.random(params[:tag])
+  redirect gif.image_original_url
 end
 
 get '/s/:tag' do
