@@ -3,4 +3,10 @@
   %head
     %title quickme.me
   %body
+    %h1 quickme.me
+    %p The following directories have images:
     = @folder_list
+    %p You can prepend the following options to your url:
+    %ul
+      %li /g/:search_term Search on Giphy
+      %li /s/:search_term Search on Google Images
