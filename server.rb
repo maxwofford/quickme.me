@@ -3,9 +3,8 @@ require 'rubygems'
 require 'sinatra'
 
 require 'bundler/setup'
-require 'giphy'
 require 'google-search'
-require 'pry'
+require 'rest-client'
 
 # Methods
 def get_file_by_folder(query)
@@ -16,7 +15,7 @@ def get_file_by_folder(query)
       return Dir[File.dirname(__FILE__) + "/public/#{category}/*"].sample
     end
   end
-  return Dir[File.dirname(__FILE__) + "/public/not_found/*"].sample
+  Dir[File.dirname(__FILE__) + "/public/not_found/*"].sample
 end
 
 def list_folders()
@@ -51,8 +50,15 @@ get '/:tag' do
 end
 
 get '/g/:tag' do
-  gif = Giphy.random(params[:tag])
-  redirect gif.image_original_url
+  # This is the public beta API key
+  api_key = "dc6zaTOxFJmzC"
+  url = "http://api.giphy.com/v1/gifs/random?api_key=#{api_key}&tag="\
+        "#{params[:tag]}"
+  giphy_response = JSON.parse RestClient.get url
+  if giphy_response['data']
+    redirect giphy_response['data']['image_original_url']
+  end
+  get_file_by_folder('not_found')
 end
 
 get '/s/:tag' do
@@ -64,6 +70,6 @@ get '/s/:tag' do
   if remote_file_is_image? image_url
     redirect image_url
   else
-    send_file(get_file_by_folder(params[:tag]))
+    get_file_by_folder('not_found')
   end
 end
