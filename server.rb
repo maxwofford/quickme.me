@@ -7,7 +7,7 @@ require 'google-search'
 require 'rest-client'
 
 # Methods
-def get_file_by_folder(query)
+def random_file_from_folder(query)
   categories = Dir.entries(File.dirname(__FILE__) + '/public')
   for category in categories
     next if category == '..' or category == '.'
@@ -33,7 +33,7 @@ def list_folders()
 end
 
 def remote_file_is_image?(url)
-  url = URI.parse(url)
+  url = URI.parse url
   Net::HTTP.start(url.host, url.port) do |http|
     return http.head(url.request_uri)['Content-Type'].start_with? 'image'
   end
@@ -41,12 +41,12 @@ end
 
 # Routes
 get '/' do
-  @folder_list = list_folders()
+  @folder_list = list_folders
   haml :index
 end
 
 get '/:tag' do
-  send_file(get_file_by_folder(params[:tag]))
+  send_file random_file_from_folder params[:tag]
 end
 
 get '/g/:tag' do
@@ -55,10 +55,10 @@ get '/g/:tag' do
   url = "http://api.giphy.com/v1/gifs/random?api_key=#{api_key}&tag="\
         "#{params[:tag]}"
   giphy_response = JSON.parse RestClient.get url
-  if giphy_response['data']
+  unless giphy_response['data'] && giphy_response['data'] == []
     redirect giphy_response['data']['image_original_url']
   end
-  get_file_by_folder('not_found')
+  send_file random_file_from_folder 'not_found'
 end
 
 get '/s/:tag' do
@@ -70,6 +70,6 @@ get '/s/:tag' do
   if remote_file_is_image? image_url
     redirect image_url
   else
-    get_file_by_folder('not_found')
+    send_file random_file_from_folder 'not_found'
   end
 end
