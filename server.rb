@@ -15,6 +15,18 @@ def random_file_from_folder(query)
       return Dir[File.dirname(__FILE__) + "/public/#{category}/*"].sample
     end
   end
+  random_gif_from_giphy query
+end
+
+def random_gif_from_giphy(query)
+  # This is the public beta API key
+  api_key = "dc6zaTOxFJmzC"
+  url = "http://api.giphy.com/v1/gifs/random?api_key=#{api_key}&tag="\
+        "#{query}"
+  giphy_response = JSON.parse RestClient.get url
+  unless giphy_response['data'] && giphy_response['data'] == []
+    redirect giphy_response['data']['image_original_url']
+  end
   Dir[File.dirname(__FILE__) + "/public/not_found/*"].sample
 end
 
@@ -50,15 +62,7 @@ get '/:tag' do
 end
 
 get '/g/:tag' do
-  # This is the public beta API key
-  api_key = "dc6zaTOxFJmzC"
-  url = "http://api.giphy.com/v1/gifs/random?api_key=#{api_key}&tag="\
-        "#{params[:tag]}"
-  giphy_response = JSON.parse RestClient.get url
-  unless giphy_response['data'] && giphy_response['data'] == []
-    redirect giphy_response['data']['image_original_url']
-  end
-  send_file random_file_from_folder 'not_found'
+  send_file random_gif_from_giphy params[:tag]
 end
 
 get '/s/:tag' do
