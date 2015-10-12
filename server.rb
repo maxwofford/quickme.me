@@ -5,6 +5,7 @@ require 'sinatra'
 require 'bundler/setup'
 require 'google-search'
 require 'rest-client'
+require_relative 'helpers'
 
 # Methods
 def random_file_from_folder(query)
@@ -58,11 +59,11 @@ get '/' do
 end
 
 get '/:tag' do
-  send_file random_file_from_folder params[:tag]
+  send_file random_file_from_folder remove_file_extension params[:tag]
 end
 
 get '/g/:tag' do
-  send_file random_gif_from_giphy params[:tag]
+  send_file random_gif_from_giphy remove_file_extension params[:tag]
 end
 
 get '/s/:tag' do
